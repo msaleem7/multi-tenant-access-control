@@ -19,10 +19,14 @@
 # frozen_string_literal: true
 
 class Membership < ApplicationRecord
+  #enums
+  enum :role, Memberships::Roles::ENUM_MAPPING,
+       default: Memberships::Roles::MEMBER,
+       validate: true
+
   #validations
   validates :user_id, :organisation_id, presence: true
   validates :user_id, uniqueness: { scope: :organisation_id }
-  validates :role, presence: true
 
   #associations
   belongs_to :user
