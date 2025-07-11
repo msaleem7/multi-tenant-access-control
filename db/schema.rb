@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_11_125431) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_185912) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -29,6 +29,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_125431) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "configuration", default: {}
     t.index ["name"], name: "index_organisations_on_name"
   end
 
@@ -59,7 +60,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_125431) do
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at"
-    t.string "name", null: false
+    t.string "first_name", null: false
+    t.string "last_name", null: false
     t.boolean "parental_consent", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -22,10 +22,10 @@ class SpacePolicy < ApplicationPolicy
   end
 
   def user_is_org_owner_or_admin?
-    org_ids = user.memberships.where(role: [Memberships::Roles::ADMIN, Memberships::Roles::OWNER])
-      .pluck(:organisation_id)
-
-    org_ids.include?(record.organisation_id)
+    @user_is_org_owner_or_admin ||= user.memberships.where(
+      organisation_id: record.organisation_id,
+      role: [Memberships::Roles::ADMIN, Memberships::Roles::OWNER]
+    ).exists?
   end
 
   class Scope < BaseScope

@@ -5,11 +5,7 @@ class MembershipsQuery < BaseQuery
     Membership
   end
 
-  def list(organisation_id, params = {})
-    # Filter by organisation is must because we don't want to reveal
-    # all members of all organisations
-    @scope = scope.where(organisation_id: organisation_id)
-
+  def list(params = {})
     filter(params)
   end
 
@@ -18,10 +14,15 @@ class MembershipsQuery < BaseQuery
   def filter(params)
     return @scope unless params
 
+    @scope = by_organisations(params[:organisation_ids]) if params[:organisation_ids]
     @scope = by_user(params[:user_id]) if params[:user_id]
     @scope = by_role(params[:role]) if params[:role]
 
     @scope
+  end
+
+  def by_organisations(organisation_ids)
+    scope.where(organisation_id: organisation_ids)
   end
 
   def by_user(user_id)

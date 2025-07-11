@@ -10,18 +10,38 @@ module Organisations
     def call
       authorize!
 
-      organisation.save!
+      ActiveRecord::Base.transaction do
+        create_organisation!
+        create_membership!
+      end
+
       organisation
     end
 
     private
 
-    def organisation
-      @organisation ||= Organisation.new(params)
-    end
-
     def authorize!
       Pundit.authorize(current_user, organisation, :create?)
+    end
+
+    def create_organisation!
+      organisation.save!
+    end
+
+    def create_membership!
+      Memberships::CreateService.new(current_user, membership_params).call
+    end
+
+    def membership_params
+      params.merge(
+        user_id: current_user.id,
+        organisation_id: organisation.id,
+        role: Memberships::Roles::OWNER
+      )
+    end
+
+    def organisation
+      @organisation ||= Organisation.new(params)
     end
   end
 end
