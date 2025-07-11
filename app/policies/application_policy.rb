@@ -26,7 +26,7 @@ class ApplicationPolicy
     false
   end
 
-  class Scope
+  class BaseScope
     def initialize(current_user, scope)
       @current_user = current_user
       @scope = scope
