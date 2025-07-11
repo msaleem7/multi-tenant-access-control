@@ -37,11 +37,7 @@ class UserSpacesController < ApplicationController
 
   private
 
-  def space
-    @space ||= Space.find(params[:space_id])
-  end
-
   def user_space_params
-    { space_id: space.id }
+    { space_id: params[:space_id] }
   end
 end

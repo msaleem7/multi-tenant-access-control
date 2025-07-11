@@ -10,7 +10,7 @@ class OrganisationPolicy < ApplicationPolicy
   private
 
   def user_is_org_owner?
-    user.memberships.where(
+    current_user.memberships.where(
       organisation_id: record.id,
       role: Memberships::Roles::OWNER
     ).exists?
@@ -18,7 +18,7 @@ class OrganisationPolicy < ApplicationPolicy
 
   class Scope < BaseScope
     def resolve
-      scope
+      scope.where(id: current_user.memberships.pluck(:organisation_id))
     end
   end
 end

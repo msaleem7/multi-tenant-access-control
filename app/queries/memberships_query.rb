@@ -7,29 +7,32 @@ class MembershipsQuery < BaseQuery
 
   def list(params = {})
     filter(params)
+    scope
   end
 
   private
 
   def filter(params)
-    return @scope unless params
+    return own_memberships if params.empty?
 
-    @scope = by_organisations(params[:organisation_ids]) if params[:organisation_ids]
-    @scope = by_user(params[:user_id]) if params[:user_id]
-    @scope = by_role(params[:role]) if params[:role]
-
-    @scope
+    filter_by_organisations(params[:organisation_ids]) if params[:organisation_ids]
+    filter_by_user(params[:user_id]) if params[:user_id]
+    filter_by_role(params[:role]) if params[:role]
   end
 
-  def by_organisations(organisation_ids)
-    scope.where(organisation_id: organisation_ids)
+  def own_memberships
+    @scope = scope.where(user_id: current_user.id)
   end
 
-  def by_user(user_id)
-    scope.where(user_id: user_id)
+  def filter_by_organisations(organisation_ids)
+    @scope = scope.where(organisation_id: organisation_ids)
   end
 
-  def by_role(role)
-    scope.where(role: role)
+  def filter_by_user(user_id)
+    @scope = scope.where(user_id: user_id)
+  end
+
+  def filter_by_role(role)
+    @scope = scope.where(role: role)
   end
 end

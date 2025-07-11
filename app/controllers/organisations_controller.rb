@@ -3,7 +3,7 @@ class OrganisationsController < ApplicationController
   before_action :set_organisation, only: [:show, :destroy]
 
   def index
-    @organisations = Organisations::ListService.new.call
+    @organisations = Organisations::ListService.new(current_user).call
   end
 
   def show
@@ -14,7 +14,7 @@ class OrganisationsController < ApplicationController
     @organisation = Organisations::CreateService.new(current_user, organisation_params).call
 
     respond_to do |format|
-      format.turbo_stream { 
+      format.turbo_stream {
         render turbo_stream: turbo_stream.append(
           "organisations_list",
           partial: "organisation",
@@ -25,7 +25,7 @@ class OrganisationsController < ApplicationController
     end
   rescue ActiveRecord::RecordInvalid => e
     respond_to do |format|
-      format.turbo_stream { 
+      format.turbo_stream {
         render turbo_stream: turbo_stream.replace(
           "new_organisation_form",
           partial: "form",

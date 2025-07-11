@@ -3,6 +3,10 @@ class SpacePolicy < ApplicationPolicy
     user_is_space_member? || user_is_org_owner_or_admin?
   end
 
+  def new?
+    user_is_org_owner_or_admin?
+  end
+
   def create?
     user_is_org_owner_or_admin?
   end
@@ -18,11 +22,11 @@ class SpacePolicy < ApplicationPolicy
   private
 
   def user_is_space_member?
-    user.spaces.ids.include?(record.id)
+    current_user.spaces.ids.include?(record.id)
   end
 
   def user_is_org_owner_or_admin?
-    @user_is_org_owner_or_admin ||= user.memberships.where(
+    @user_is_org_owner_or_admin ||= current_user.memberships.where(
       organisation_id: record.organisation_id,
       role: [Memberships::Roles::ADMIN, Memberships::Roles::OWNER]
     ).exists?
@@ -30,7 +34,7 @@ class SpacePolicy < ApplicationPolicy
 
   class Scope < BaseScope
     def resolve
-      scope
+      scope.where(organisation_id: current_user.memberships.pluck(:organisation_id))
     end
   end
 end

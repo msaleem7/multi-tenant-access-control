@@ -5,20 +5,22 @@ class SpacesQuery < BaseQuery
     Space
   end
 
-  def list(params = {})
+  def list(organisation_id, params = {})
+    @organisation_id = organisation_id
+
     filter(params)
+    scope
   end
 
   private
 
-  def filter(params)
-    return @scope unless params
+  attr_reader :organisation_id
 
-    @scope = by_organisations(params[:organisation_ids]) if params[:organisation_ids]
-    @scope
+  def filter(params)
+    filter_by_organisation
   end
 
-  def by_organisations(organisation_ids)
-    scope.where(organisation_id: organisation_ids)
+  def filter_by_organisation
+    @scope = scope.where(organisation_id: organisation_id)
   end
 end

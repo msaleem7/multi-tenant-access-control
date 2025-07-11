@@ -18,7 +18,7 @@ class UserPolicy < ApplicationPolicy
   private
 
   def self?
-    user == record
+    current_user == record
   end
 
   class Scope < BaseScope

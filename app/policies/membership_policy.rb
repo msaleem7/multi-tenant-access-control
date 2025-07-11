@@ -17,18 +17,18 @@ class MembershipPolicy < ApplicationPolicy
   private
 
   def user_is_the_creator?
-    user.id == record.user_id
+    current_user.id == record.user_id
   end
 
   def user_is_org_owner?
-    user.memberships.where(
+    current_user.memberships.where(
       organisation_id: record.organisation_id,
       role: Memberships::Roles::OWNER
     ).exists?
   end
 
   def user_is_org_admin?
-    user.memberships.where(
+    current_user.memberships.where(
       organisation_id: record.organisation_id,
       role: Memberships::Roles::ADMIN
     ).exists?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_11_185912) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_204852) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -31,6 +31,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_185912) do
     t.datetime "updated_at", null: false
     t.jsonb "configuration", default: {}
     t.index ["name"], name: "index_organisations_on_name"
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "content", null: false
+    t.integer "age_rating", default: 0
+    t.bigint "user_id", null: false
+    t.bigint "space_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["space_id"], name: "index_posts_on_space_id"
+    t.index ["user_id", "space_id"], name: "index_posts_on_user_id_and_space_id", unique: true
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "spaces", force: :cascade do |t|
@@ -65,12 +78,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_11_185912) do
     t.boolean "parental_consent", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "age"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "memberships", "organisations"
   add_foreign_key "memberships", "users"
+  add_foreign_key "posts", "spaces"
+  add_foreign_key "posts", "users"
   add_foreign_key "spaces", "organisations"
   add_foreign_key "user_spaces", "spaces"
   add_foreign_key "user_spaces", "users"

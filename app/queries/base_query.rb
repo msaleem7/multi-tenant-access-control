@@ -3,8 +3,8 @@
 class BaseQuery
   include Pundit::Authorization
 
-  def initialize(user, base_scope = nil)
-    @user = user
+  def initialize(current_user, base_scope = nil)
+    @current_user = current_user
     @scope = policy_scope(
       base_scope || self.class.model,
       policy_scope_class: self.class.policy_scope_class
@@ -25,12 +25,12 @@ class BaseQuery
 
   private
 
-  attr_reader :user
+  attr_reader :current_user
 
   attr_accessor :scope
 
   def pundit_user
-    user
+    current_user
   end
 
   def basic_filtered_list(params)

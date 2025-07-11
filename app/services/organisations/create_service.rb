@@ -33,11 +33,11 @@ module Organisations
     end
 
     def membership_params
-      params.merge(
+      { 
         user_id: current_user.id,
         organisation_id: organisation.id,
         role: Memberships::Roles::OWNER
-      )
+      }
     end
 
     def organisation

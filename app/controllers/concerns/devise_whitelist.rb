@@ -10,7 +10,7 @@ module DeviseWhitelist
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :parental_consent])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:first_name, :last_name, :parental_consent, :age])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:first_name, :last_name, :parental_consent, :age])
   end
 end

@@ -53,7 +53,7 @@ module UserSpaces
 
     def validate_parental_consent!
       return unless space.requires_parental_consent
-      return if current_user.has_parental_consent
+      return if current_user.parental_consent
 
       raise StandardError, "Parental consent is required to join this space."
     end

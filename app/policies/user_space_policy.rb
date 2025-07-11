@@ -14,26 +14,26 @@ class UserSpacePolicy < ApplicationPolicy
   end
 
   def record_user_membership_role
-    user.memberships.find_by(
+    current_user.memberships.find_by(
       organisation_id: record.organisation_id
     )&.role
   end
 
   def user_is_org_owner?
-    user.memberships.where(
+    current_user.memberships.where(
       organisation_id: record.organisation_id,
       role: Memberships::Roles::OWNER
     ).exists?
   end
 
   def user_is_admin?
-    user.memberships.where(
+    current_user.memberships.where(
       organisation_id: record.organisation_id,
       role: Memberships::Roles::ADMIN
     ).exists?
   end
 
   def record_belongs_to_user?
-    record.user == user
+    record.user == current_user
   end
 end
