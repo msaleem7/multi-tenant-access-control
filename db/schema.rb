@@ -10,19 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_10_202431) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_11_125431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "organisation_id", null: false
     t.integer "role", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["organisation_id", "role"], name: "index_memberships_on_organisation_id_and_role"
+    t.bigint "organisation_id", null: false
     t.index ["organisation_id"], name: "index_memberships_on_organisation_id"
-    t.index ["user_id", "organisation_id"], name: "index_memberships_on_user_id_and_organisation_id", unique: true
+    t.index ["organisation_id"], name: "unique_owner_per_organization", unique: true, where: "(role = 0)"
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 

@@ -27,8 +27,17 @@ class Membership < ApplicationRecord
   #validations
   validates :user_id, :organisation_id, presence: true
   validates :user_id, uniqueness: { scope: :organisation_id }
+  validate :only_one_owner_per_organisation, if: -> { role == Memberships::Roles::OWNER }
 
   #associations
   belongs_to :user
   belongs_to :organisation
+
+  private
+
+  def only_one_owner_per_organisation
+    if organisation.memberships.where.not(id: id).where(role: Memberships::Roles::OWNER).exists?
+      errors.add(:role, "Only one owner is allowed per organisation")
+    end
+  end
 end
