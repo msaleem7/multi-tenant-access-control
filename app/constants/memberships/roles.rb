@@ -1,11 +1,13 @@
 module Memberships
   module Roles
-    MEMBER = 0
-    ADMIN = 1
+    OWNER = "owner".freeze
+    ADMIN = "admin".freeze
+    MEMBER = "member".freeze
 
     ENUM_MAPPING = {
-      MEMBER => "member",
-      ADMIN => "admin"
+      OWNER => 0,
+      ADMIN => 1,
+      MEMBER => 2
     }.freeze
   end
 end
