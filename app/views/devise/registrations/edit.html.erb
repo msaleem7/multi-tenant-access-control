@@ -1,0 +1,87 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Edit Profile</h2>
+        </div>
+        <div class="card-body">
+          <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+            <%= render "devise/shared/error_messages", resource: resource %>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :first_name %>
+                  <%= f.text_field :first_name, autofocus: true, class: "form-control" %>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <%= f.label :last_name %>
+                  <%= f.text_field :last_name, class: "form-control" %>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <%= f.label :email %>
+              <%= f.email_field :email, autocomplete: "email", class: "form-control" %>
+            </div>
+
+            <div class="form-group mb-3">
+              <%= f.label :age %>
+              <%= f.number_field :age, class: "form-control", min: 1 %>
+            </div>
+
+            <% if devise_mapping.confirmable? && resource.pending_reconfirmation? %>
+              <div class="alert alert-info mb-3">
+                Currently waiting confirmation for: <%= resource.unconfirmed_email %>
+              </div>
+            <% end %>
+
+            <div class="form-group mb-3">
+              <%= f.label :password %> <span class="text-muted">(leave blank if you don't want to change it)</span>
+              <%= f.password_field :password, autocomplete: "new-password", class: "form-control" %>
+              <% if @minimum_password_length %>
+                <div class="form-text text-muted"><%= @minimum_password_length %> characters minimum</div>
+              <% end %>
+            </div>
+
+            <div class="form-group mb-3">
+              <%= f.label :password_confirmation %>
+              <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "form-control" %>
+            </div>
+
+            <div class="form-check mb-3">
+              <%= f.check_box :parental_consent, class: "form-check-input" %>
+              <%= f.label :parental_consent, "I confirm I have parental consent", class: "form-check-label" %>
+            </div>
+
+            <div class="form-group mb-4">
+              <%= f.label :current_password %> <span class="text-muted">(we need your current password to confirm your changes)</span>
+              <%= f.password_field :current_password, autocomplete: "current-password", class: "form-control" %>
+            </div>
+
+            <div class="d-grid gap-2">
+              <%= f.submit "Update", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="card mt-4 shadow border-danger">
+        <div class="card-header bg-danger text-white">
+          <h3 class="mb-0">Cancel my account</h3>
+        </div>
+        <div class="card-body">
+          <p>Unhappy with your account? Once you cancel your account, all of your data will be permanently deleted.</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete, class: "btn btn-danger" %>
+            <%= link_to "Back", :back, class: "btn btn-outline-secondary" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

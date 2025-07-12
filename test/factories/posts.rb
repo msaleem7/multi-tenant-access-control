@@ -20,6 +20,18 @@
 
 FactoryBot.define do
   factory :post do
+    title { Faker::Lorem.sentence(word_count: 4) }
+    content { Faker::Lorem.paragraphs(number: 3).join("\n\n") }
+    age_rating { Posts::AgeRatings::GENERAL }
+    association :user
+    association :space
     
+    trait :teen do
+      age_rating { Posts::AgeRatings::TEEN }
+    end
+    
+    trait :adult do
+      age_rating { Posts::AgeRatings::ADULT }
+    end
   end
 end

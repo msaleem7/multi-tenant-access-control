@@ -28,4 +28,5 @@ class Space < ApplicationRecord
   belongs_to :organisation
   has_many :user_spaces, dependent: :destroy
   has_many :users, through: :user_spaces
+  has_many :posts, dependent: :destroy
 end

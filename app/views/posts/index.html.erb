@@ -1,0 +1,92 @@
+<!-- Breadcrumb navigation -->
+<nav aria-label="breadcrumb" class="bg-light py-2">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><%= link_to "Organizations", organisations_path %></li>
+      <li class="breadcrumb-item"><%= link_to @space.organisation.name, organisation_path(@space.organisation) %></li>
+      <li class="breadcrumb-item"><%= link_to @space.name, space_path(@space) %></li>
+      <li class="breadcrumb-item active" aria-current="page">Posts</li>
+    </ol>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold mb-1"><%= @space.name %> - Posts</h1>
+      <p class="text-muted mb-0">Share and discuss content with space members</p>
+    </div>
+    <% if policy(Post.new(space: @space)).new? %>
+      <%= link_to new_space_post_path(@space), class: "btn btn-primary" do %>
+        <i class="bi bi-plus-lg me-1"></i> New Post
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if @posts.any? %>
+    <div class="row">
+      <% @posts.each do |post| %>
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card h-100 border-0 shadow-sm hover-shadow">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center">
+                  <div class="avatar me-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                    <span class="text-white fw-bold"><%= post.user.first_name[0].upcase %></span>
+                  </div>
+                  <div>
+                    <div class="fw-bold"><%= post.user.first_name %> <%= post.user.last_name %></div>
+                    <div class="text-muted small"><%= time_ago_in_words(post.created_at) %> ago</div>
+                  </div>
+                </div>
+                <% case post.age_rating 
+                   when Posts::AgeRatings::GENERAL %>
+                  <span class="badge bg-success">General</span>
+                <% when Posts::AgeRatings::TEEN %>
+                  <span class="badge bg-warning">Teen (13+)</span>
+                <% when Posts::AgeRatings::ADULT %>
+                  <span class="badge bg-danger">Adult (18+)</span>
+                <% end %>
+              </div>
+              <h5 class="card-title fw-bold mb-2"><%= link_to post.title, post_path(post), class: "text-decoration-none text-dark" %></h5>
+              <p class="card-text text-muted mb-3"><%= truncate(post.content, length: 100) %></p>
+              <div class="d-flex justify-content-between align-items-center">
+                <%= link_to "Read more", post_path(post), class: "btn btn-sm btn-outline-primary" %>
+                <% if policy(post).update? || policy(post).destroy? %>
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="postActions<%= post.id %>" data-bs-toggle="dropdown" aria-expanded="false">
+                      Actions
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postActions<%= post.id %>">
+                      <% if policy(post).update? %>
+                        <li><%= link_to "Edit", edit_post_path(post), class: "dropdown-item" %></li>
+                      <% end %>
+                      <% if policy(post).destroy? %>
+                        <li>
+                          <%= button_to post_path(post), method: :delete, class: "dropdown-item text-danger", form: { data: { turbo_confirm: "Are you sure you want to delete this post?" } } do %>
+                            Delete
+                          <% end %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-5 animate__animated animate__fadeIn">
+      <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Posts" class="img-fluid mx-auto mb-3" style="max-width: 150px;">
+      <h3 class="fw-bold">No Posts Yet</h3>
+      <p class="text-muted mb-4">Be the first to share content in this space!</p>
+      <% if policy(Post.new(space: @space)).new? %>
+        <%= link_to new_space_post_path(@space), class: "btn btn-primary" do %>
+          <i class="bi bi-plus-lg me-1"></i> Create First Post
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

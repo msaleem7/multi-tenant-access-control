@@ -1,0 +1,45 @@
+<div id="<%= dom_id(space) %>" class="col-md-6 col-xl-4 animate__animated animate__fadeIn">
+  <div class="card h-100 border-0 shadow-sm rounded-3 hover-shadow transition-all overflow-hidden">
+    <!-- Card header with gradient background -->
+    <div class="card-header border-0 p-0">
+      <div class="p-3" style="background: linear-gradient(135deg, <%= ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'].sample %>, <%= ['#2e59d9', '#13855c', '#258391', '#dda20a', '#be2617'].sample %>);">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="space-icon me-3 rounded-circle d-flex align-items-center justify-content-center bg-white" style="width: 40px; height: 40px;">
+              <span class="fw-bold fs-5" style="color: <%= ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'].sample %>"><%= space.name[0].upcase %></span>
+            </div>
+            <div class="text-white">
+              <h6 class="fw-bold mb-0"><%= space.name %></h6>
+              <p class="small mb-0 opacity-75">Created <%= time_ago_in_words(space.created_at) %> ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Card body -->
+    <div class="card-body p-3">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex align-items-center">
+          <div class="me-2">
+            <i class="bi bi-people text-primary"></i>
+          </div>
+          <div>
+            <span class="fw-medium"><%= space.user_spaces.count %> members</span>
+          </div>
+        </div>
+      </div>
+      
+      <% if space.description.present? %>
+        <p class="text-muted small mb-0 text-truncate"><%= space.description %></p>
+      <% end %>
+    </div>
+    
+    <!-- Card footer -->
+    <div class="card-footer bg-light p-3 border-0">
+      <div class="d-flex justify-content-between">
+        <%= render 'spaces/actions', space: space %>
+      </div>
+    </div>
+  </div>
+</div>

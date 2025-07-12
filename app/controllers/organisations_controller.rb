@@ -1,6 +1,6 @@
 class OrganisationsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_organisation, only: [:show, :destroy]
+  before_action :set_organisation, only: [:show, :update, :destroy]
 
   def index
     @organisations = Organisations::ListService.new(current_user).call
@@ -36,8 +36,18 @@ class OrganisationsController < ApplicationController
     end
   end
 
+  def update
+    authorize @organisation
+    
+    if @organisation.update(organisation_params)
+      redirect_to organisation_path(@organisation), notice: "Organization was successfully updated to '#{@organisation.name}'."
+    else
+      redirect_to organisation_path(@organisation), alert: "Failed to update organization: #{@organisation.errors.full_messages.join(', ')}"
+    end
+  end
+
   def destroy
-    @organisation = Organisations::ReadService.new(params[:id]).call
+    authorize @organisation
     Organisations::DestroyService.new(current_user, @organisation).call
 
     respond_to do |format|

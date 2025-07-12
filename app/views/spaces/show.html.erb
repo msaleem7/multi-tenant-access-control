@@ -1,0 +1,346 @@
+<!-- Breadcrumb navigation -->
+<nav aria-label="breadcrumb" class="bg-light py-2">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><%= link_to "Organizations", organisations_path %></li>
+      <li class="breadcrumb-item"><%= link_to @space.organisation.name, organisation_path(@space.organisation) %></li>
+      <li class="breadcrumb-item active" aria-current="page"><%= @space.name %></li>
+    </ol>
+  </div>
+</nav>
+
+<div class="container-fluid py-5" style="background-color: #f8f9fa;">
+  <div class="container">
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-5 animate__animated animate__fadeIn">
+      <div class="card-body p-0">
+        <div class="row g-0">
+          <!-- Space Header -->
+          <div class="col-lg-4 p-4" style="background: linear-gradient(135deg, #0a2e63, #1565C0);">
+            <div class="d-flex align-items-center mb-4">
+              <div class="space-icon me-3 rounded-circle d-flex align-items-center justify-content-center bg-white" style="width: 64px; height: 64px;">
+                <span class="fw-bold fs-2 text-primary"><%= @space.name[0].upcase %></span>
+              </div>
+              <div class="text-white">
+                <h1 class="fw-bold mb-0"><%= @space.name %></h1>
+                <p class="mb-0 opacity-75">Created <%= time_ago_in_words(@space.created_at) %> ago</p>
+              </div>
+            </div>
+            
+            <div class="d-flex text-white mb-4">
+              <div class="me-4">
+                <div class="fs-1 fw-bold"><%= @space.users.count %></div>
+                <div class="text-white-50">Members</div>
+              </div>
+            </div>
+            
+            <div class="d-flex">
+              <%= link_to organisation_path(@space.organisation), class: "btn btn-light" do %>
+                <i class="bi bi-arrow-left me-1"></i> Back to Organization
+              <% end %>
+            </div>
+          </div>
+          
+          <div class="col-lg-8 p-4">
+            <ul class="nav nav-tabs" id="spaceTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">
+                  <i class="bi bi-info-circle me-1"></i> Details
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="posts-tab" data-bs-toggle="tab" data-bs-target="#posts" type="button" role="tab" aria-controls="posts" aria-selected="false">
+                  <i class="bi bi-file-text me-1"></i> Posts
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="false">
+                  <i class="bi bi-people me-1"></i> Members
+                </button>
+              </li>
+              <% if policy(@space).update? %>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+                    <i class="bi bi-gear me-1"></i> Settings
+                  </button>
+                </li>
+              <% end %>
+            </ul>
+            
+            <div class="tab-content p-3" id="spaceTabsContent">
+              <!-- Details Tab -->
+              <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                <div class="mb-4">
+                  <h5 class="fw-bold mb-3">Description</h5>
+                  <% if @space.description.present? %>
+                    <p><%= @space.description %></p>
+                  <% else %>
+                    <p class="text-muted">No description provided</p>
+                  <% end %>
+                </div>
+                
+                <div class="row">
+                  <% if @space.min_age.present? || @space.max_age.present? %>
+                    <div class="col-md-6 mb-4">
+                      <h5 class="fw-bold mb-3">Age Requirements</h5>
+                      <div class="card border-0 shadow-sm">
+                        <div class="card-body">
+                          <% if @space.min_age.present? && @space.max_age.present? %>
+                            <p class="mb-0"><i class="bi bi-calendar-check me-2 text-primary"></i> Ages <%= @space.min_age %> to <%= @space.max_age %></p>
+                          <% elsif @space.min_age.present? %>
+                            <p class="mb-0"><i class="bi bi-calendar-check me-2 text-primary"></i> Minimum age: <%= @space.min_age %></p>
+                          <% elsif @space.max_age.present? %>
+                            <p class="mb-0"><i class="bi bi-calendar-check me-2 text-primary"></i> Maximum age: <%= @space.max_age %></p>
+                          <% end %>
+                        </div>
+                      </div>
+                    </div>
+                  <% end %>
+                  
+                  <div class="col-md-6 mb-4">
+                    <h5 class="fw-bold mb-3">Parental Consent</h5>
+                    <div class="card border-0 shadow-sm">
+                      <div class="card-body">
+                        <% if @space.requires_parental_consent %>
+                          <p class="mb-0 text-warning"><i class="bi bi-shield-exclamation me-2"></i> Parental consent required</p>
+                        <% else %>
+                          <p class="mb-0 text-success"><i class="bi bi-shield-check me-2"></i> No parental consent required</p>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Posts Tab -->
+              <div class="tab-pane fade" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <h5 class="fw-bold mb-1">Space Posts</h5>
+                    <p class="text-muted mb-0">Share and discuss content with space members</p>
+                  </div>
+                  <% if policy(Post.new(space: @space)).new? %>
+                    <%= link_to new_space_post_path(@space), class: "btn btn-primary" do %>
+                      <i class="bi bi-plus-lg me-1"></i> New Post
+                    <% end %>
+                  <% end %>
+                </div>
+                
+                <% if @recent_posts.any? %>
+                  <div class="row">
+                    <% @recent_posts.each do |post| %>
+                      <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 shadow-sm hover-shadow">
+                          <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                              <div class="d-flex align-items-center">
+                                <div class="avatar me-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                                  <span class="text-white fw-bold"><%= post.user.first_name[0].upcase %></span>
+                                </div>
+                                <div>
+                                  <div class="fw-bold"><%= post.user.first_name %> <%= post.user.last_name %></div>
+                                  <div class="text-muted small"><%= time_ago_in_words(post.created_at) %> ago</div>
+                                </div>
+                              </div>
+                              <% case post.age_rating 
+                                 when Posts::AgeRatings::GENERAL %>
+                                <span class="badge bg-success">General</span>
+                              <% when Posts::AgeRatings::TEEN %>
+                                <span class="badge bg-warning">Teen (13+)</span>
+                              <% when Posts::AgeRatings::ADULT %>
+                                <span class="badge bg-danger">Adult (18+)</span>
+                              <% end %>
+                            </div>
+                            <h5 class="card-title fw-bold mb-2"><%= link_to post.title, post_path(post), class: "text-decoration-none text-dark" %></h5>
+                            <p class="card-text text-muted mb-3"><%= truncate(post.content, length: 100) %></p>
+                            <%= link_to "Read more", post_path(post), class: "btn btn-sm btn-outline-primary" %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                  
+                  <div class="text-center mt-3">
+                    <%= link_to space_posts_path(@space), class: "btn btn-outline-primary" do %>
+                      View All Posts <i class="bi bi-arrow-right ms-1"></i>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="text-center py-5 animate__animated animate__fadeIn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No Posts" class="img-fluid mx-auto mb-3" style="max-width: 150px;">
+                    <h3 class="fw-bold">No Posts Yet</h3>
+                    <p class="text-muted mb-4">Be the first to share content in this space!</p>
+                    <% if policy(Post.new(space: @space)).new? %>
+                      <%= link_to new_space_post_path(@space), class: "btn btn-primary" do %>
+                        <i class="bi bi-plus-lg me-1"></i> Create First Post
+                      <% end %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <!-- Members Tab -->
+              <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <h5 class="fw-bold mb-1">Space Members</h5>
+                    <p class="text-muted mb-0">People who have access to this space</p>
+                  </div>
+                  <% if policy(@space).update? %>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                      <i class="bi bi-person-plus me-1"></i> Add Member
+                    </button>
+                  <% end %>
+                </div>
+                
+                <% if @users.present? %>
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Added</th>
+                          <% if policy(@space).update? %>
+                            <th>Actions</th>
+                          <% end %>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% @users.each do |user| %>
+                          <tr>
+                            <td>
+                              <div class="d-flex align-items-center">
+                                <div class="avatar me-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                                  <span class="text-white fw-bold"><%= user.first_name[0].upcase %></span>
+                                </div>
+                                <div>
+                                  <%= user.first_name %> <%= user.last_name %>
+                                </div>
+                              </div>
+                            </td>
+                            <td><%= user.email %></td>
+                            <td><%= time_ago_in_words(user.user_spaces.find_by(space: @space).created_at) %> ago</td>
+                            <% if policy(@space).update? %>
+                              <td>
+                                <%= button_to user_space_path(user.user_spaces.find_by(space: @space)), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: "Are you sure you want to remove this member from the space?" } } do %>
+                                  <i class="bi bi-person-x"></i> Remove
+                                <% end %>
+                              </td>
+                            <% end %>
+                          </tr>
+                        <% end %>
+                      </tbody>
+                    </table>
+                  </div>
+                <% else %>
+                  <div class="text-center py-5 animate__animated animate__fadeIn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3126/3126574.png" alt="No Members" class="img-fluid mx-auto mb-3" style="max-width: 120px;">
+                    <h4 class="fw-bold">No Members Yet</h4>
+                    <p class="text-muted mb-4">This space doesn't have any members yet.</p>
+                    <% if policy(@space).update? %>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
+                        <i class="bi bi-person-plus me-1"></i> Add Your First Member
+                      </button>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <!-- Settings Tab -->
+              <% if policy(@space).update? %>
+                <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                  <div class="mb-4">
+                    <h5 class="fw-bold mb-3">Space Settings</h5>
+                    
+                    <div class="card border-0 shadow-sm mb-4">
+                      <div class="card-body">
+                        <h6 class="fw-bold mb-3">Update Space Information</h6>
+                        <%= form_with(model: @space, url: space_path(@space), method: :patch, local: true) do |form| %>
+                          <div class="mb-3">
+                            <%= form.label :name, class: "form-label" %>
+                            <%= form.text_field :name, class: "form-control", required: true %>
+                          </div>
+                          
+                          <div class="mb-3">
+                            <%= form.label :description, class: "form-label" %>
+                            <%= form.text_area :description, class: "form-control", rows: 3 %>
+                          </div>
+                          
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <%= form.label :min_age, "Minimum Age", class: "form-label" %>
+                                <%= form.number_field :min_age, class: "form-control", min: 0 %>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <%= form.label :max_age, "Maximum Age", class: "form-label" %>
+                                <%= form.number_field :max_age, class: "form-control", min: 0 %>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div class="mb-3 form-check">
+                            <%= form.check_box :requires_parental_consent, class: "form-check-input" %>
+                            <%= form.label :requires_parental_consent, "Requires Parental Consent", class: "form-check-label" %>
+                          </div>
+                          
+                          <div class="d-flex justify-content-end">
+                            <%= form.submit "Update Space", class: "btn btn-primary" %>
+                          </div>
+                        <% end %>
+                      </div>
+                    </div>
+                    
+                    <div class="card border-0 shadow-sm border-danger border-top border-4">
+                      <div class="card-body">
+                        <h6 class="fw-bold text-danger mb-3">Danger Zone</h6>
+                        <p class="text-muted">Deleting a space will permanently remove all associated data. This action cannot be undone.</p>
+                        
+                        <% if policy(@space).destroy? %>
+                          <%= button_to space_path(@space), method: :delete, class: "btn btn-outline-danger", form: { data: { turbo_confirm: "Are you sure you want to delete this space? This action cannot be undone." } } do %>
+                            <i class="bi bi-trash me-1"></i> Delete Space
+                          <% end %>
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if policy(@space).update? %>
+  <!-- Add Member Modal -->
+  <div class="modal fade" id="addMemberModal" tabindex="-1" aria-labelledby="addMemberModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addMemberModalLabel">Add Member to Space</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <%= form_with(url: space_user_spaces_path(@space), method: :post) do |form| %>
+            <%= form.hidden_field :space_id, value: @space.id %>
+            
+            <div class="mb-3">
+              <%= form.label :user_id, "Select Member", class: "form-label" %>
+              <%= form.collection_select :user_id, @space.organisation.users.where.not(id: @space.users.pluck(:id)), :id, :email, {}, { class: "form-select", required: true } %>
+            </div>
+            
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancel</button>
+              <%= form.submit "Add Member", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

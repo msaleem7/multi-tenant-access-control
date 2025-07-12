@@ -59,6 +59,7 @@ module UserSpaces
     end
 
     def space_membership_configuration
+      return {} if organisation.configuration.blank? || organisation.configuration[:space_membership].blank?
       @space_membership_configuration ||= organisation.configuration[:space_membership].symbolize_keys
     end
 
@@ -75,11 +76,12 @@ module UserSpaces
     end
 
     def space
-      @space ||= existing_spaces.find_by(id: params[:space_id])
+      @space ||= Space.find_by(id: params[:space_id])
     end
 
     def existing_spaces
-      @existing_spaces ||= Spaces::ListService.new(current_user).call
+      return Space.none unless space
+      @existing_spaces ||= Spaces::ListService.new(current_user, space.organisation_id).call
     end
 
     def organisation

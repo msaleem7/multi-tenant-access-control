@@ -1,0 +1,63 @@
+<!-- Breadcrumb navigation -->
+<nav aria-label="breadcrumb" class="bg-light py-2">
+  <div class="container">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><%= link_to "Organizations", organisations_path %></li>
+      <li class="breadcrumb-item"><%= link_to @space.organisation.name, organisation_path(@space.organisation) %></li>
+      <li class="breadcrumb-item"><%= link_to @space.name, space_path(@space) %></li>
+      <li class="breadcrumb-item"><%= link_to "Posts", space_posts_path(@space) %></li>
+      <li class="breadcrumb-item active" aria-current="page">New Post</li>
+    </ol>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate__animated animate__fadeIn">
+        <div class="card-header p-0">
+          <div class="p-4" style="background: linear-gradient(135deg, #0a2e63, #1565C0);">
+            <div class="d-flex align-items-center">
+              <div class="me-3 rounded-circle d-flex align-items-center justify-content-center bg-white" style="width: 56px; height: 56px;">
+                <i class="bi bi-pencil-square text-primary fs-3"></i>
+              </div>
+              <div>
+                <h2 class="card-title mb-0 fw-bold text-white">Create New Post</h2>
+                <p class="text-white-50 mb-0">Share your thoughts with space members</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-4 p-lg-5">
+          <div class="mb-4">
+            <div class="d-flex align-items-center mb-3">
+              <div class="avatar me-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                <span class="text-white fw-bold"><%= current_user.first_name[0].upcase %></span>
+              </div>
+              <div>
+                <div class="fw-bold fs-5"><%= current_user.first_name %> <%= current_user.last_name %></div>
+                <div class="text-muted">Posting to <%= @space.name %></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="post-form-container">
+            <%= render 'form', post: @post %>
+          </div>
+          
+          <div class="mt-4 pt-3 border-top">
+            <div class="d-flex align-items-center">
+              <div class="me-3">
+                <i class="bi bi-info-circle text-primary"></i>
+              </div>
+              <div class="text-muted small">
+                <p class="mb-1">Posts are visible to all members of this space.</p>
+                <p class="mb-0">Please ensure your content follows community guidelines.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

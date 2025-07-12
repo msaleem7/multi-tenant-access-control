@@ -1,0 +1,51 @@
+<%= form_with(model: organisation, id: dom_id(organisation, :form)) do |form| %>
+  <% if organisation.errors.any? %>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <h6 class="fw-bold"><%= pluralize(organisation.errors.count, "error") %> prohibited this organisation from being saved:</h6>
+      <ul class="mb-0 ps-3">
+        <% organisation.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <div class="d-flex justify-content-center mb-4">
+      <div class="org-icon-preview rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background-color: #4e73df;">
+        <span class="text-white fw-bold fs-1" id="org-initial">O</span>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <%= form.label :name, class: "form-label fw-medium" %>
+      <div class="input-group">
+        <span class="input-group-text bg-light">
+          <i class="bi bi-building"></i>
+        </span>
+        <%= form.text_field :name, class: "form-control form-control-lg", placeholder: "Enter organization name", id: "organisation_name", oninput: "document.getElementById('org-initial').textContent = this.value ? this.value[0].toUpperCase() : 'O';" %>
+      </div>
+      <div class="form-text text-muted">Choose a descriptive name for your organization</div>
+    </div>
+
+    <div class="mt-4">
+      <div class="d-grid gap-2">
+        <%= form.submit class: "btn btn-primary btn-lg" %>
+        <button type="reset" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Form
+        </button>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  // Add some simple animation when form loads
+  document.addEventListener('turbo:load', function() {
+    const formElement = document.getElementById('<%= dom_id(organisation, :form) %>');
+    if (formElement) {
+      formElement.classList.add('animate__animated', 'animate__fadeIn');
+    }
+  });
+</script>

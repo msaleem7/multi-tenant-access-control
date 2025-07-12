@@ -1,17 +1,29 @@
 # Create Users
 user1 = User.create!(
+  first_name: 'John',
+  last_name: 'Doe',
+  parental_consent: true,
+  age: 25,
   email: 'user1@example.com',
   password: 'password123',
   password_confirmation: 'password123'
 )
 
 user2 = User.create!(
+  first_name: 'Jane',
+  last_name: 'Doe',
+  parental_consent: true,
+  age: 14,
   email: 'user2@example.com',
   password: 'password123',
   password_confirmation: 'password123'
 )
 
 user3 = User.create!(
+  first_name: 'John',
+  last_name: 'Doe',
+  parental_consent: true,
+  age: 18,
   email: 'user3@example.com',
   password: 'password123',
   password_confirmation: 'password123'

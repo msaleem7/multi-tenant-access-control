@@ -1,0 +1,14 @@
+<%# This partial handles the join/view actions for a space %>
+<div id="space_actions">
+  <% if current_user.user_spaces.exists?(space_id: space.id) %>
+    <%= link_to space_path(space), class: "btn btn-sm btn-outline-primary" do %>
+      <i class="bi bi-eye me-1"></i> View
+    <% end %>
+  <% else %>
+    <%= button_to space_user_spaces_path(space), method: :post, class: "btn btn-sm btn-outline-success" do %>
+      <i class="bi bi-plus-circle me-1"></i> Join
+    <% end %>
+  <% end %>
+  
+  <%# Delete button removed from card as it's already available in the settings tab %>
+</div>

@@ -1,0 +1,61 @@
+<div class="container-fluid p-0">
+  <div class="row g-0">
+    <!-- Left side with login form -->
+    <div class="col-md-6 d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+      <div class="login-container p-4" style="width: 80%; max-width: 450px;">
+        <div class="mb-4">
+          <div class="d-flex align-items-center mb-2">
+            <div class="brand-icon rounded-circle bg-primary d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+              <span class="text-white fw-bold">A</span>
+            </div>
+            <span class="fw-bold fs-4">AccessControl</span>
+          </div>
+          <h1 class="fw-bold mb-1">Welcome back!</h1>
+          <p class="text-muted mb-4">Enter your credentials to access your account</p>
+        </div>
+
+        <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <div class="mb-3">
+            <%= f.label :email_address, class: "form-label fw-medium" %>
+            <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control", placeholder: "Your email address" %>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <%= f.label :password, class: "form-label fw-medium" %>
+              <%= link_to "forgot password", new_password_path(resource_name), class: "text-primary small" %>
+            </div>
+            <%= f.password_field :password, autocomplete: "current-password", class: "form-control", placeholder: "Password" %>
+          </div>
+
+          <% if devise_mapping.rememberable? %>
+            <div class="form-check mb-3">
+              <%= f.check_box :remember_me, class: "form-check-input" %>
+              <%= f.label :remember_me, "Remember me", class: "form-check-label" %>
+            </div>
+          <% end %>
+
+          <div class="d-grid gap-2 mb-3">
+            <%= f.submit "Login", class: "btn btn-primary py-2" %>
+          </div>
+        <% end %>
+
+        <div class="text-center mt-4">
+          <p class="text-muted">Or</p>
+        </div>
+
+        <div class="text-center mt-4">
+          <p class="mb-0">Don't have an account? <%= link_to "Sign Up", new_registration_path(resource_name), class: "text-primary" %></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Right side with city skyline image -->
+    <div class="col-md-6 d-none d-md-block" style="background-color: #0a1a33; min-height: 100vh;">
+      <div class="h-100 d-flex align-items-center justify-content-center">
+        <img src="https://images.unsplash.com/photo-1514924013411-cbf25faa35bb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1740&q=80" 
+             alt="City skyline at night" class="img-fluid" style="max-height: 100vh; width: 100%; object-fit: cover;">
+      </div>
+    </div>
+  </div>
+</div>

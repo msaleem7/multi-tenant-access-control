@@ -1,0 +1,54 @@
+<div class="col-md-6 mb-4" id="<%= dom_id(organisation) %>">
+  <div class="card h-100 border-0 shadow-sm rounded-3 hover-shadow transition-all overflow-hidden">
+    <!-- Card header with gradient background -->
+    <div class="card-header border-0 p-0">
+      <div class="p-3" style="background: linear-gradient(135deg, <%= ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'].sample %>, <%= ['#2e59d9', '#13855c', '#258391', '#dda20a', '#be2617'].sample %>);">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="org-icon me-3 rounded-circle d-flex align-items-center justify-content-center bg-white" style="width: 48px; height: 48px;">
+              <span class="fw-bold fs-4" style="color: <%= ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'].sample %>"><%= organisation.name[0].upcase %></span>
+            </div>
+            <div class="text-white">
+              <h5 class="card-title fw-bold mb-0"><%= organisation.name %></h5>
+              <p class="small mb-0 opacity-75">Created <%= time_ago_in_words(organisation.created_at) %> ago</p>
+            </div>
+          </div>
+          <% membership = organisation.memberships.find_by(user: current_user) %>
+          <% if membership.role == Memberships::Roles::OWNER %>
+            <span class="badge bg-white text-danger">Owner</span>
+          <% elsif membership.role == Memberships::Roles::ADMIN %>
+            <span class="badge bg-white text-warning">Admin</span>
+          <% else %>
+            <span class="badge bg-white text-info">Member</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Card body -->
+    <div class="card-body p-4">
+      <!-- Stats row -->
+      <div class="row g-0 text-center mb-4">
+        <div class="col-6 border-end">
+          <div class="p-3">
+            <h4 class="mb-0 fw-bold"><%= organisation.spaces.count %></h4>
+            <p class="text-muted mb-0">Spaces</p>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="p-3">
+            <h4 class="mb-0 fw-bold"><%= organisation.users.count %></h4>
+            <p class="text-muted mb-0">Members</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Action button -->
+      <div class="text-center">
+        <%= link_to organisation_path(organisation), class: "btn btn-primary w-100" do %>
+          <i class="bi bi-box-arrow-in-right me-2"></i> Enter Organization
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

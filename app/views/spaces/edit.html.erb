@@ -1,0 +1,68 @@
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-3 overflow-hidden animate__animated animate__fadeIn">
+        <div class="card-header bg-primary text-white p-4 border-0">
+          <h4 class="fw-bold mb-0"><i class="bi bi-pencil-square me-2"></i> Edit Space</h4>
+          <p class="mb-0 opacity-75">Update details for <%= @space.name %></p>
+        </div>
+        
+        <div class="card-body p-4">
+          <%= form_with(model: @space, url: space_path(@space), method: :patch, local: true) do |form| %>
+            <% if @space.errors.any? %>
+              <div class="alert alert-danger mb-4">
+                <h5 class="alert-heading"><i class="bi bi-exclamation-triangle me-2"></i> Errors occurred</h5>
+                <ul class="mb-0">
+                  <% @space.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                </ul>
+              </div>
+            <% end %>
+            
+            <div class="mb-4">
+              <%= form.label :name, class: "form-label fw-medium" %>
+              <%= form.text_field :name, class: "form-control form-control-lg", placeholder: "Enter space name", required: true %>
+              <div class="form-text">Choose a descriptive name for your space</div>
+            </div>
+            
+            <div class="mb-4">
+              <%= form.label :description, class: "form-label fw-medium" %>
+              <%= form.text_area :description, class: "form-control", rows: 4, placeholder: "Describe the purpose of this space" %>
+              <div class="form-text">Optional: Provide details about what this space is for</div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <%= form.label :min_age, "Minimum Age", class: "form-label fw-medium" %>
+                <%= form.number_field :min_age, class: "form-control", min: 0, placeholder: "Optional" %>
+              </div>
+              <div class="col-md-6">
+                <%= form.label :max_age, "Maximum Age", class: "form-label fw-medium" %>
+                <%= form.number_field :max_age, class: "form-control", min: 0, placeholder: "Optional" %>
+              </div>
+              <div class="col-12">
+                <div class="form-text">Optional: Set age restrictions for this space</div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <div class="form-check">
+                <%= form.check_box :requires_parental_consent, class: "form-check-input" %>
+                <%= form.label :requires_parental_consent, "Requires Parental Consent", class: "form-check-label" %>
+              </div>
+              <div class="form-text">Check this if parental consent is required for users of this space</div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+              <%= link_to space_path(@space), class: "btn btn-outline-secondary" do %>
+                <i class="bi bi-arrow-left me-1"></i> Back
+              <% end %>
+              <%= form.submit "Update Space", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

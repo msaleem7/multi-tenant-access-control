@@ -1,0 +1,241 @@
+<div class="container-fluid py-5" style="background-color: #f8f9fa;">
+  <div class="container">
+    <!-- Organization Header -->
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-5 animate__animated animate__fadeIn">
+      <div class="card-body p-0">
+        <div class="row g-0">
+          <div class="col-lg-4 p-4" style="background: linear-gradient(135deg, #0a2e63, #1565C0);">
+            <div class="d-flex align-items-center mb-4">
+              <div class="org-icon me-3 rounded-circle d-flex align-items-center justify-content-center bg-white" style="width: 64px; height: 64px;">
+                <span class="fw-bold fs-2 text-primary"><%= @organisation.name[0].upcase %></span>
+              </div>
+              <div class="text-white">
+                <h1 class="fw-bold mb-0"><%= @organisation.name %></h1>
+                <p class="mb-0 opacity-75">Created <%= time_ago_in_words(@organisation.created_at) %> ago</p>
+              </div>
+            </div>
+            
+            <div class="d-flex text-white mb-4">
+              <div class="me-4">
+                <div class="fs-1 fw-bold"><%= @spaces.count %></div>
+                <div class="text-white-50">Spaces</div>
+              </div>
+              <div class="me-4">
+                <div class="fs-1 fw-bold"><%= @organisation.users.count %></div>
+                <div class="text-white-50">Members</div>
+              </div>
+            </div>
+            
+            <div class="d-flex">
+              <%= link_to organisations_path, class: "btn btn-light" do %>
+                <i class="bi bi-arrow-left me-1"></i> Back to Organizations
+              <% end %>
+            </div>
+          </div>
+          
+          <div class="col-lg-8 p-4">
+            <ul class="nav nav-tabs" id="orgTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="spaces-tab" data-bs-toggle="tab" data-bs-target="#spaces" type="button" role="tab" aria-controls="spaces" aria-selected="true">
+                  <i class="bi bi-grid me-1"></i> Spaces
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="false">
+                  <i class="bi bi-people me-1"></i> Members
+                </button>
+              </li>
+              <% if policy(@organisation).destroy? %>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+                    <i class="bi bi-gear me-1"></i> Settings
+                  </button>
+                </li>
+              <% end %>
+            </ul>
+            
+            <div class="tab-content p-3" id="orgTabsContent">
+              <div class="tab-pane fade show active" id="spaces" role="tabpanel" aria-labelledby="spaces-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <h5 class="fw-bold mb-1">Organization Spaces</h5>
+                    <p class="text-muted mb-0">Manage your organization's workspaces</p>
+                  </div>
+                  <% if policy(Space.new(organisation: @organisation)).new? %>
+                    <%= link_to new_organisation_space_path(@organisation), class: "btn btn-primary" do %>
+                      <i class="bi bi-plus-circle me-1"></i> New Space
+                    <% end %>
+                  <% end %>
+                </div>
+                
+                <% if @spaces.present? %>
+                  <div id="spaces_list" class="row g-4">
+                    <% @spaces.each do |space| %>
+                      <%= render 'spaces/space', space: space %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="text-center py-5 animate__animated animate__fadeIn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3588/3588614.png" alt="No Spaces" class="img-fluid mx-auto mb-3" style="max-width: 120px;">
+                    <h4 class="fw-bold">No Spaces Yet</h4>
+                    <p class="text-muted mb-4">This organization doesn't have any spaces yet.</p>
+                    <% if policy(Space.new(organisation: @organisation)).new? %>
+                      <%= link_to new_organisation_space_path(@organisation), class: "btn btn-primary" do %>
+                        <i class="bi bi-plus-circle me-1"></i> Create Your First Space
+                      <% end %>
+                    <% else %>
+                      <p class="text-muted">Only owners and admins can create spaces.</p>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="tab-pane fade" id="members" role="tabpanel" aria-labelledby="members-tab">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <h5 class="fw-bold mb-1">Members Management</h5>
+                    <p class="text-muted mb-0">Manage your organization's team members</p>
+                  </div>
+                  <% if policy(Membership.new(organisation: @organisation)).create? %>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                      <i class="bi bi-person-plus me-1"></i> Invite Member
+                    </button>
+                  <% end %>
+                </div>
+                
+                <% if @organisation.users.present? %>
+                  <div class="row g-4">
+                    <% @organisation.memberships.includes(:user).each do |membership| %>
+                      <div class="col-md-6 col-xl-4 animate__animated animate__fadeIn">
+                        <div class="card h-100 border-0 shadow-sm rounded-3 hover-shadow transition-all overflow-hidden">
+                          <% 
+                            role_bg_color = case membership.role
+                              when Memberships::Roles::OWNER then "bg-danger bg-opacity-10 border-danger border-opacity-25"
+                              when Memberships::Roles::ADMIN then "bg-warning bg-opacity-10 border-warning border-opacity-25"
+                              else "bg-info bg-opacity-10 border-info border-opacity-25"
+                            end
+                            
+                            role_text_color = case membership.role
+                              when Memberships::Roles::OWNER then "text-danger"
+                              when Memberships::Roles::ADMIN then "text-warning"
+                              else "text-info"
+                            end
+                            
+                            role_name = case membership.role
+                              when Memberships::Roles::OWNER then "Owner"
+                              when Memberships::Roles::ADMIN then "Admin"
+                              else "Member"
+                            end
+                          %>
+                          
+                          <div class="card-header <%= role_bg_color %> border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                              <span class="<%= role_text_color %> fw-medium"><i class="bi bi-shield-check me-1"></i> <%= role_name %></span>
+                              <span class="text-muted small">Joined <%= time_ago_in_words(membership.created_at) %> ago</span>
+                            </div>
+                          </div>
+                          
+                          <!-- Card body -->
+                          <div class="card-body p-4">
+                            <div class="text-center mb-3">
+                              <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: linear-gradient(135deg, #6a11cb, #2575fc);">
+                                <span class="text-white fw-bold fs-1"><%= membership.user.first_name[0].upcase %></span>
+                              </div>
+                              <h5 class="fw-bold mb-1"><%= membership.user.first_name %> <%= membership.user.last_name %></h5>
+                              <p class="text-muted mb-0"><%= membership.user.email %></p>
+                            </div>
+
+                          </div>
+                          
+                          <!-- Card footer -->
+                          <div class="card-footer bg-light p-3 border-0">
+                            <div class="d-flex justify-content-end">
+                              <% if policy(membership).destroy? %>
+                                <%= button_to membership_path(membership), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: "Are you sure you want to remove #{membership.user.first_name} from this organization?" } } do %>
+                                  <i class="bi bi-person-x me-1"></i> Remove Member
+                                <% end %>
+                              <% end %>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="text-center py-5 animate__animated animate__fadeIn">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3126/3126574.png" alt="No Members" class="img-fluid mx-auto mb-3" style="max-width: 120px;">
+                    <h4 class="fw-bold">No Members Yet</h4>
+                    <p class="text-muted mb-4">This organization doesn't have any additional members yet.</p>
+                    <% if policy(Membership.new(organisation: @organisation)).create? %>
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#inviteMemberModal">
+                        <i class="bi bi-person-plus me-1"></i> Invite Your First Member
+                      </button>
+                    <% else %>
+                      <p class="text-muted">Only owners and admins can invite members.</p>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+                <h5 class="mb-4">Organization Settings</h5>
+                
+                <div class="card shadow-sm mb-4">
+                  <div class="card-header bg-light">
+                    <h6 class="mb-0">General Information</h6>
+                  </div>
+                  <div class="card-body">
+                    <%= form_with(model: @organisation, url: organisation_path(@organisation), method: :patch, local: true, class: "needs-validation") do |form| %>
+                      <div class="mb-3">
+                        <%= form.label :name, class: "form-label" %>
+                        <%= form.text_field :name, class: "form-control", required: true %>
+                        <div class="form-text">This is the name that will be displayed throughout the application.</div>
+                      </div>
+                      
+                      <div class="d-flex justify-content-end">
+                        <%= form.submit "Update Organization", class: "btn btn-primary" %>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+                
+                <div class="card shadow-sm border-danger border-opacity-25">
+                  <div class="card-header bg-danger bg-opacity-10 border-danger border-opacity-25">
+                    <h6 class="mb-0 text-danger"><i class="bi bi-exclamation-triangle-fill me-2"></i>Danger Zone</h6>
+                  </div>
+                  <div class="card-body p-4">
+                    <div class="alert alert-warning p-3 mb-4">
+                      <div class="d-flex">
+                        <div class="me-3">
+                          <i class="bi bi-info-circle-fill fs-4 text-warning"></i>
+                        </div>
+                        <div>
+                          <h6 class="fw-bold mb-1">Important Information</h6>
+                          <p class="mb-0">Deleting this organization will permanently remove all associated spaces, memberships, and data. This action cannot be undone.</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center p-3 border border-danger border-opacity-25 rounded">
+                      <div>
+                        <h6 class="fw-bold mb-1">Delete this organization</h6>
+                        <p class="text-muted mb-0">This will permanently delete <strong><%= @organisation.name %></strong></p>
+                      </div>
+                      <%= button_to organisation_path(@organisation), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: "Are you sure you want to delete '#{@organisation.name}'? This action cannot be undone and will delete all associated spaces and memberships." } } do %>
+                        Delete Organization
+                      <% end %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%= render 'invite_member_modal' %>
+  </div>
+</div>
