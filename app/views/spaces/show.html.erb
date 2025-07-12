@@ -2,7 +2,7 @@
 <nav aria-label="breadcrumb" class="bg-light py-2">
   <div class="container">
     <ol class="breadcrumb mb-0">
-      <li class="breadcrumb-item"><%= link_to "Organizations", organisations_path %></li>
+      <li class="breadcrumb-item"><%= link_to "Organisations", organisations_path %></li>
       <li class="breadcrumb-item"><%= link_to @space.organisation.name, organisation_path(@space.organisation) %></li>
       <li class="breadcrumb-item active" aria-current="page"><%= @space.name %></li>
     </ol>
@@ -35,7 +35,7 @@
             
             <div class="d-flex">
               <%= link_to organisation_path(@space.organisation), class: "btn btn-light" do %>
-                <i class="bi bi-arrow-left me-1"></i> Back to Organization
+                <i class="bi bi-arrow-left me-1"></i> Back to organisation
               <% end %>
             </div>
           </div>
@@ -185,14 +185,9 @@
                     <h5 class="fw-bold mb-1">Space Members</h5>
                     <p class="text-muted mb-0">People who have access to this space</p>
                   </div>
-                  <% if policy(@space).update? %>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
-                      <i class="bi bi-person-plus me-1"></i> Add Member
-                    </button>
-                  <% end %>
                 </div>
                 
-                <% if @users.present? %>
+                <% if @space.users.present? %>
                   <div class="table-responsive">
                     <table class="table table-hover">
                       <thead>
@@ -206,23 +201,23 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <% @users.each do |user| %>
+                        <% @space.user_spaces.each do |user_space| %>
                           <tr>
                             <td>
                               <div class="d-flex align-items-center">
                                 <div class="avatar me-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: linear-gradient(135deg, #6a11cb, #2575fc);">
-                                  <span class="text-white fw-bold"><%= user.first_name[0].upcase %></span>
+                                  <span class="text-white fw-bold"><%= user_space.user.first_name[0].upcase %></span>
                                 </div>
                                 <div>
-                                  <%= user.first_name %> <%= user.last_name %>
+                                  <%= user_space.user.first_name %> <%= user_space.user.last_name %>
                                 </div>
                               </div>
                             </td>
-                            <td><%= user.email %></td>
-                            <td><%= time_ago_in_words(user.user_spaces.find_by(space: @space).created_at) %> ago</td>
-                            <% if policy(@space).update? %>
+                            <td><%= user_space.user.email %></td>
+                            <td><%= time_ago_in_words(user_space.created_at) %> ago</td>
+                            <% if policy(user_space).destroy? %>
                               <td>
-                                <%= button_to user_space_path(user.user_spaces.find_by(space: @space)), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: "Are you sure you want to remove this member from the space?" } } do %>
+                                <%= button_to user_space_path(user_space), method: :delete, class: "btn btn-sm btn-outline-danger", form: { data: { turbo_confirm: "Are you sure you want to remove this member from the space?" } } do %>
                                   <i class="bi bi-person-x"></i> Remove
                                 <% end %>
                               </td>
@@ -237,11 +232,6 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/3126/3126574.png" alt="No Members" class="img-fluid mx-auto mb-3" style="max-width: 120px;">
                     <h4 class="fw-bold">No Members Yet</h4>
                     <p class="text-muted mb-4">This space doesn't have any members yet.</p>
-                    <% if policy(@space).update? %>
-                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addMemberModal">
-                        <i class="bi bi-person-plus me-1"></i> Add Your First Member
-                      </button>
-                    <% end %>
                   </div>
                 <% end %>
               </div>

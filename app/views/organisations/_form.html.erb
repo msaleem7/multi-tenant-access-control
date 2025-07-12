@@ -24,9 +24,24 @@
         <span class="input-group-text bg-light">
           <i class="bi bi-building"></i>
         </span>
-        <%= form.text_field :name, class: "form-control form-control-lg", placeholder: "Enter organization name", id: "organisation_name", oninput: "document.getElementById('org-initial').textContent = this.value ? this.value[0].toUpperCase() : 'O';" %>
+        <%= form.text_field :name, class: "form-control form-control-lg", placeholder: "Enter Name", id: "organisation_name", oninput: "document.getElementById('org-initial').textContent = this.value ? this.value[0].toUpperCase() : 'O';" %>
       </div>
-      <div class="form-text text-muted">Choose a descriptive name for your organization</div>
+      <div class="form-text text-muted">Choose a descriptive name for your organisation</div>
+    </div>
+    
+    <div class="mb-3">
+      <%= form.label 'space_membership[limit]', "Max Spaces Per Member", class: "form-label fw-medium" %>
+      <div class="input-group">
+        <span class="input-group-text bg-light">
+          <i class="bi bi-people"></i>
+        </span>
+        <%= form.fields_for :configuration, organisation.configuration do |config_form| %>
+          <%= config_form.fields_for :space_membership, organisation.configuration["space_membership"] || {} do |sm_form| %>
+            <%= sm_form.number_field :limit, value: organisation.configuration.dig("space_membership", "limit"), class: "form-control", placeholder: "Optional", min: 1 %>
+          <% end %>
+        <% end %>
+      </div>
+      <div class="form-text text-muted">Set a maximum number of spaces each member can join</div>
     </div>
 
     <div class="mt-4">

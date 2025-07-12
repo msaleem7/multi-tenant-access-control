@@ -14,9 +14,9 @@ class MembershipsController < ApplicationController
       return
     end
     
-    # Check if user is already a member of the organization
+    # Check if user is already a member of the organisation
     if @organisation.users.include?(user)
-      redirect_to organisation_path(@organisation), alert: "User is already a member of this organization."
+      redirect_to organisation_path(@organisation), alert: "User is already a member of this organisation."
       return
     end
     
@@ -27,9 +27,9 @@ class MembershipsController < ApplicationController
     authorize membership
     
     if membership.save
-      redirect_to organisation_path(@organisation), notice: "#{user.first_name} #{user.last_name} has been added to the organization."
+      redirect_to organisation_path(@organisation), notice: "#{user.first_name} #{user.last_name} has been added to the organisation."
     else
-      redirect_to organisation_path(@organisation), alert: "Failed to add user to the organization: #{membership.errors.full_messages.join(', ')}"
+      redirect_to organisation_path(@organisation), alert: "Failed to add user to the organisation: #{membership.errors.full_messages.join(', ')}"
     end
   end
   
@@ -40,9 +40,9 @@ class MembershipsController < ApplicationController
     authorize membership
     
     if membership.destroy
-      redirect_to organisation_path(@organisation), notice: "Member has been removed from the organization."
+      redirect_to organisation_path(@organisation), notice: "Member has been removed from the organisation."
     else
-      redirect_to organisation_path(@organisation), alert: "Failed to remove member from the organization."
+      redirect_to organisation_path(@organisation), alert: "Failed to remove member from the organisation."
     end
   end
   

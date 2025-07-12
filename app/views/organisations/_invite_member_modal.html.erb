@@ -12,18 +12,19 @@
             <label for="email" class="form-label">Email address</label>
             <%= f.email_field :email, class: "form-control", placeholder: "Enter email address", required: true %>
           </div>
-          <div class="mb-3">
-            <label for="role" class="form-label">Role</label>
-            <%= f.select :role, 
-              options_for_select([
-                ["Member", Memberships::Roles::MEMBER],
-                ["Admin", Memberships::Roles::ADMIN],
-                ["Owner", Memberships::Roles::OWNER]
-              ]), 
-              {}, 
-              { class: "form-select" } 
-            %>
-          </div>
+          <% if policy(Membership.new(organisation: @organisation)).manage_role? %>
+            <div class="mb-3">
+              <label for="role" class="form-label">Role</label>
+              <%= f.select :role, 
+                options_for_select([
+                  ["Member", Memberships::Roles::MEMBER],
+                  ["Admin", Memberships::Roles::ADMIN]
+                ]), 
+                {}, 
+                { class: "form-select" } 
+              %>
+            </div>
+          <% end %>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

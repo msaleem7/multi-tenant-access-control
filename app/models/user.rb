@@ -14,4 +14,5 @@ class User < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :user_spaces, dependent: :destroy
   has_many :spaces, through: :user_spaces
+  has_many :posts, dependent: :destroy
 end

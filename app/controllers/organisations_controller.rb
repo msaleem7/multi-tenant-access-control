@@ -1,13 +1,12 @@
 class OrganisationsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_organisation, only: [:show, :update, :destroy]
 
   def index
     @organisations = Organisations::ListService.new(current_user).call
   end
 
   def show
-    @spaces = @organisation.spaces
+    @spaces = Spaces::ListService.new(current_user, organisation.id).call
   end
 
   def create
@@ -37,34 +36,26 @@ class OrganisationsController < ApplicationController
   end
 
   def update
-    authorize @organisation
-    
-    if @organisation.update(organisation_params)
-      redirect_to organisation_path(@organisation), notice: "Organization was successfully updated to '#{@organisation.name}'."
-    else
-      redirect_to organisation_path(@organisation), alert: "Failed to update organization: #{@organisation.errors.full_messages.join(', ')}"
-    end
+    Organisations::UpdateService.new(current_user, organisation, organisation_params).call
+    redirect_to organisation_path(organisation), notice: "organisation was successfully updated to '#{@organisation.name}'."
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to organisation_path(organisation), alert: "Failed to update organisation: #{e.record.errors.full_messages.join(', ')}"
   end
 
   def destroy
-    authorize @organisation
-    Organisations::DestroyService.new(current_user, @organisation).call
+    authorize organisation
+    Organisations::DestroyService.new(current_user, organisation).call
 
-    respond_to do |format|
-      format.turbo_stream { 
-        render turbo_stream: turbo_stream.remove(@organisation)
-      }
-      format.html { redirect_to organisations_path, notice: "Organisation was successfully deleted." }
-    end
+    redirect_to organisations_path, notice: "Organisation was successfully deleted."
   end
 
   private
 
-  def set_organisation
-    @organisation = Organisation.find(params[:id])
+  def organisation
+    @organisation ||= Organisations::ReadService.new(current_user).call(params[:id])
   end
 
   def organisation_params
-    params.require(:organisation).permit(:name)
+    params.require(:organisation).permit(:name, configuration: {space_membership: {}})
   end
 end

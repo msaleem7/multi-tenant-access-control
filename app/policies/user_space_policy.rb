@@ -15,25 +15,35 @@ class UserSpacePolicy < ApplicationPolicy
 
   def record_user_membership_role
     current_user.memberships.find_by(
-      organisation_id: record.organisation_id
+      organisation_id: organisation.id
     )&.role
   end
 
   def user_is_org_owner?
     current_user.memberships.where(
-      organisation_id: record.organisation_id,
+      organisation_id: organisation.id,
       role: Memberships::Roles::OWNER
     ).exists?
   end
 
   def user_is_admin?
     current_user.memberships.where(
-      organisation_id: record.organisation_id,
+      organisation_id: organisation.id,
       role: Memberships::Roles::ADMIN
     ).exists?
   end
 
   def record_belongs_to_user?
     record.user == current_user
+  end
+
+  def organisation
+    @organisation ||= record.space.organisation
+  end
+
+  class Scope < BaseScope
+    def resolve
+      scope.where(user_id: current_user.id)
+    end
   end
 end

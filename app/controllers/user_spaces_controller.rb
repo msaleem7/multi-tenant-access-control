@@ -1,18 +1,17 @@
 class UserSpacesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_space, only: [:create]
-  before_action :set_user_space, only: [:destroy]
 
   def create
-    user_space = UserSpaces::CreateService.new(current_user, user_space_params).call
+    new_user_space = UserSpaces::CreateService.new(current_user, user_space_params).call
 
     respond_to do |format|
-      format.html { redirect_to space_path(user_space.space), notice: "Successfully joined the space." }
+      format.html { redirect_to space_path(new_user_space.space), notice: "You've joined the space." }
       format.turbo_stream { 
+        flash[:notice] = "You've joined the space."
         render turbo_stream: turbo_stream.replace(
           "space_actions",
           partial: "spaces/actions",
-          locals: { space: user_space.space }
+          locals: { space: new_user_space.space }
         )
       }
     end
@@ -21,17 +20,22 @@ class UserSpacesController < ApplicationController
   end
 
   def destroy
-    space = @user_space.space
-    UserSpaces::DestroyService.new(current_user, @user_space).call
+    space = user_space.space
+    UserSpaces::DestroyService.new(current_user, user_space).call
 
     respond_to do |format|
       format.html { redirect_to space_path(space), notice: "Successfully left the space." }
-      format.turbo_stream { 
-        render turbo_stream: turbo_stream.replace(
-          "space_actions",
-          partial: "spaces/actions",
-          locals: { space: space }
-        )
+      format.turbo_stream {
+        flash[:notice] = "You've left the space."
+
+        render turbo_stream: [
+          turbo_stream.replace(
+            "space_actions",
+            partial: "spaces/actions",
+            locals: { space: space }
+          ),
+          flash_turbo_stream
+        ]
       }
     end
   rescue StandardError => e
@@ -39,13 +43,9 @@ class UserSpacesController < ApplicationController
   end
 
   private
-  
-  def set_space
-    @space = Space.find(params[:space_id])
-  end
-  
-  def set_user_space
-    @user_space = UserSpace.find(params[:id])
+
+  def user_space
+    UserSpaces::ListService.new(current_user).call.find(params[:id])
   end
 
   def user_space_params

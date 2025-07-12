@@ -1,6 +1,6 @@
 class SpacePolicy < ApplicationPolicy
   def show?
-    user_is_space_member? || user_is_org_owner_or_admin?
+    user_is_space_member?
   end
 
   def new?
@@ -12,11 +12,11 @@ class SpacePolicy < ApplicationPolicy
   end
 
   def update?
-    user_is_org_owner_or_admin?
+    user_is_space_member? && user_is_org_owner_or_admin?
   end
 
   def destroy?
-    user_is_org_owner_or_admin?
+    update?
   end
 
   private

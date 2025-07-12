@@ -1,30 +1,27 @@
 class SpacesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_space, only: [:show, :edit, :update, :destroy]
 
   def show
-    authorize @space
-    @users = @space.users.includes(:user_spaces)
+    @space = Space.find(params[:id])
+    authorize(@space)
+
     @recent_posts = @space.posts.includes(:user).order(created_at: :desc).limit(5)
   end
 
   def new
     @space = organisation.spaces.build
-    authorize @space
   end
 
   def edit
-    authorize @space
   end
 
   def create
     @space = organisation.spaces.build(space_params)
-    authorize @space
-    
+
     # Create the space using the service
     @space = Spaces::CreateService.new(current_user, space_params.merge(organisation: organisation)).call
     
-    # Get the organization ID for redirect
+    # Get the organisation ID for redirect
     org_id = @space.organisation_id
 
     respond_to do |format|
@@ -45,8 +42,6 @@ class SpacesController < ApplicationController
   end
 
   def update
-    authorize @space
-    
     if @space.update(space_params)
       redirect_to space_path(@space), notice: "Space was successfully updated."
     else
@@ -72,20 +67,16 @@ class SpacesController < ApplicationController
 
   private
 
-  def organisation
-    @organisation ||= begin
-      if params[:organisation_id].present?
-        Organisations::ReadService.new(params[:organisation_id], current_user).call
-      elsif @space&.organisation_id.present?
-        Organisations::ReadService.new(@space.organisation_id, current_user).call
-      else
-        raise ArgumentError, "Organisation ID is required"
-      end
-    end
+  def space
+    @space ||= Spaces::ReadService.new(current_user).call(params[:id])
   end
 
-  def set_space
-    @space = Space.find(params[:id])
+  def spaces
+    @spaces ||= Spaces::ListService.new(current_user, organisation.id).call
+  end
+
+  def organisation
+    @organisation ||= Organisations::ReadService.new(current_user).call(params[:organisation_id] || @space&.organisation_id)
   end
 
   def space_params

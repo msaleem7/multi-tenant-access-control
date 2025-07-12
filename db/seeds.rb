@@ -10,8 +10,8 @@ user1 = User.create!(
 )
 
 user2 = User.create!(
-  first_name: 'Jane',
-  last_name: 'Doe',
+  first_name: 'Alex',
+  last_name: 'Smith',
   parental_consent: true,
   age: 14,
   email: 'user2@example.com',
@@ -20,8 +20,8 @@ user2 = User.create!(
 )
 
 user3 = User.create!(
-  first_name: 'John',
-  last_name: 'Doe',
+  first_name: 'Mathew',
+  last_name: 'McCaughey',
   parental_consent: true,
   age: 18,
   email: 'user3@example.com',
@@ -36,16 +36,16 @@ org3 = Organisation.create!(name: 'Third Organisation')
 
 # Create Memberships
 # user1 owns org1 and org2
-UserOrganisation.create!(user: user1, organisation: org1, role: Memberships::Roles::OWNER)
-UserOrganisation.create!(user: user1, organisation: org2, role: Memberships::Roles::OWNER)
+Membership.create!(user: user1, organisation: org1, role: Memberships::Roles::OWNER)
+Membership.create!(user: user1, organisation: org2, role: Memberships::Roles::OWNER)
 
 # user2 owns org3
-UserOrganisation.create!(user: user2, organisation: org3, role: Memberships::Roles::OWNER)
+Membership.create!(user: user2, organisation: org3, role: Memberships::Roles::OWNER)
 
 # user3 is member of all organisations
-UserOrganisation.create!(user: user3, organisation: org1, role: Memberships::Roles::MEMBER)
-UserOrganisation.create!(user: user3, organisation: org2, role: Memberships::Roles::MEMBER)
-UserOrganisation.create!(user: user3, organisation: org3, role: Memberships::Roles::MEMBER)
+Membership.create!(user: user3, organisation: org1, role: Memberships::Roles::MEMBER)
+Membership.create!(user: user3, organisation: org2, role: Memberships::Roles::MEMBER)
+Membership.create!(user: user3, organisation: org3, role: Memberships::Roles::MEMBER)
 
 # user2 is admin in org1 and org2
 UserOrganisation.create!(user: user2, organisation: org1, role: Memberships::Roles::ADMIN)
@@ -121,3 +121,5 @@ org2_spaces.each { |space| create_posts_for_space(space, user1) }
 
 # Create posts for org3 spaces (by user2 - owner)
 org3_spaces.each { |space| create_posts_for_space(space, user2) }
+
+puts "Seeds completed successfully!"

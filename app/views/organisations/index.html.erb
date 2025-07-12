@@ -9,7 +9,7 @@
               <div class="col-md-6 d-flex align-items-center" style="background: linear-gradient(135deg, #0a2e63, #1565C0);">
                 <div class="p-5 text-white">
                   <h1 class="display-5 fw-bold mb-4">Welcome to Your Dashboard</h1>
-                  <p class="lead mb-4">Manage your organizations and access control settings in one place.</p>
+                  <p class="lead mb-4">Manage your organisations and access control settings in one place.</p>
                 </div>
               </div>
               <div class="col-md-6">
@@ -17,26 +17,8 @@
                   <div class="row g-4">
                     <div class="col-6">
                       <div class="stat-card p-3 bg-light rounded-3">
-                        <h3 class="fs-1 fw-bold text-primary mb-1"><%= @organisations.present? ? @organisations.count : 0 %></h3>
-                        <p class="text-muted mb-0">Organizations</p>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="stat-card p-3 bg-light rounded-3">
-                        <h3 class="fs-1 fw-bold text-success mb-1"><%= @organisations.present? ? @organisations.map { |org| org.spaces.count }.sum : 0 %></h3>
-                        <p class="text-muted mb-0">Total Spaces</p>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="stat-card p-3 bg-light rounded-3">
-                        <h3 class="fs-1 fw-bold text-warning mb-1"><%= current_user.memberships.count %></h3>
-                        <p class="text-muted mb-0">Memberships</p>
-                      </div>
-                    </div>
-                    <div class="col-6">
-                      <div class="stat-card p-3 bg-light rounded-3">
-                        <h3 class="fs-1 fw-bold text-info mb-1"><%= @organisations.present? ? @organisations.map { |org| org.users.count }.sum : 0 %></h3>
-                        <p class="text-muted mb-0">Total Members</p>
+                        <h3 class="fs-1 fw-bold text-primary mb-1"><%= @organisations.count %></h3>
+                        <p class="text-muted mb-0">Organisations</p>
                       </div>
                     </div>
                   </div>
@@ -48,11 +30,11 @@
       </div>
     </div>
     
-    <!-- Organizations and Create Form -->
+    <!-- Organisations and Create Form -->
     <div class="row g-4">
       <div class="col-lg-8">
         <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="fw-bold">Your Organizations</h2>
+          <h2 class="fw-bold">Your Organisations</h2>
           <div class="d-flex gap-2">
             <div class="dropdown">
               <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -70,7 +52,7 @@
                 <i class="bi bi-funnel me-1"></i> Filter
               </button>
               <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                <li><a class="dropdown-item" href="#">All Organizations</a></li>
+                <li><a class="dropdown-item" href="#">All Organisations</a></li>
                 <li><a class="dropdown-item" href="#">Recently Updated</a></li>
                 <li><a class="dropdown-item" href="#">Admin Access</a></li>
               </ul>
@@ -84,11 +66,11 @@
           <% else %>
             <div class="col-12">
               <div class="card border-0 shadow-sm rounded-3 p-4 text-center">
-                <img src="https://cdn-icons-png.flaticon.com/512/3588/3588614.png" alt="No Organizations" class="img-fluid mx-auto mb-3" style="max-width: 150px;">
-                <h3 class="fw-bold">No Organizations Yet</h3>
-                <p class="text-muted mb-4">You don't have any organizations yet. Create your first one using the form on the right!</p>
+                <img src="https://cdn-icons-png.flaticon.com/512/3588/3588614.png" alt="No Organisations" class="img-fluid mx-auto mb-3" style="max-width: 150px;">
+                <h3 class="fw-bold">No Organisations Yet</h3>
+                <p class="text-muted mb-4">You don't have any organisations yet. Create your first one using the form on the right!</p>
                 <button class="btn btn-primary" onclick="document.getElementById('organisation_name').focus()">
-                  <i class="bi bi-plus-circle me-1"></i> Create Your First Organization
+                  <i class="bi bi-plus-circle me-1"></i> Create Your First organisation
                 </button>
               </div>
             </div>
@@ -99,8 +81,8 @@
       <div class="col-lg-4">
         <div class="card border-0 shadow-sm rounded-3 sticky-top" style="top: 20px;">
           <div class="card-header bg-primary text-white p-4">
-            <h3 class="mb-0">Create New Organization</h3>
-            <p class="mb-0 opacity-75">Get started with a new organization</p>
+            <h3 class="mb-0">Create New organisation</h3>
+            <p class="mb-0 opacity-75">Get started with a new organisation</p>
           </div>
           <div class="card-body p-4">
             <div id="new_organisation_form">
