@@ -32,7 +32,7 @@ group :development do
   gem "web-console"
   gem 'annotate', '< 3.2.0'
   gem 'better_errors', '~> 2.10', '>= 2.10.1'
-  gem 'rubocop', '~> 1.78'
+  gem 'rubocop', '~> 1.79'
 end
 
 group :test do
